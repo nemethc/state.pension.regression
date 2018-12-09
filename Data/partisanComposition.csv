@@ -1,0 +1,51 @@
+﻿GovtName,LegControl,GovParty,StateControl
+Alabama,r,r,r
+Alaska,r,i,s
+Arizona,r,r,r
+Arkansas,r,r,r
+California,d,d,d
+Colorado,s,d,s
+Connecticut,s,d,s
+Delaware,d,d,d
+Florida,r,r,r
+Gerogia,r,r,r
+Hawaii,d,d,d
+Idaho,r,r,r
+Illinois,d,r,s
+Indiana,r,r,r
+Iowa,r,r,r
+Kansas,r,r,r
+Kentucky,r,r,r
+Louisiana,r,d,s
+Maine,s,r,s
+Maryland,d,r,s
+Massachusetts,d,r,s
+Michigan,r,r,r
+Minnesota,r,d,s
+Mississippi,r,r,r
+Missouri,r,r,r
+Montana,r,d,s
+Nebraska,,r,
+Nevada,d,r,s
+New Hampshire,r,r,r
+New Jersey,d,r,s
+New Mexico,d,r,s
+New York,d,d,d
+North Carolina,r,d,s
+North Dakota,r,r,r
+Ohio,r,r,r
+Oklahoma,r,r,r
+Oregon,d,d,d
+Pennsylvania,r,d,s
+Rhode Island,d,d,d
+South Carolina,r,r,r
+Sout Dakota,r,r,r
+Tennessee,r,r,r
+Texas,r,r,r
+Utah,r,r,r
+Vermont,d,r,s
+Virginia,r,d,s
+Washington,d,d,d
+West Virginia,r,d,s
+Wisconsin,r,r,r
+Wyoming,r,r,r

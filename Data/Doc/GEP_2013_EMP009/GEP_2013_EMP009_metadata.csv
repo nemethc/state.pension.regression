@@ -1,0 +1,15 @@
+GEO.id,Geographic identifier code
+GEO.id2,Id2
+GEO.display-label,Geographic area name
+GEO.annotation.id,Id
+YEAR.id,Year
+GOVEMPFUNCT.id,Government Employment Function
+GOVEMPFUNCT.display-label,Meaning of Government Employment Function
+EMPFT,Full-Time Employent
+PAYANNFT,Full-Time Payroll (whole dollars)
+EMPPT,Part-Time Employment
+PAYANNPT,Part-Time Payroll (whole dollars)
+HRSPT,Part-Time Hours
+EMPFTE,Full-Time Equivalent Employment
+EMP,Total March Full-Time and Part-Time Employment
+PAYANN,Total March Payroll (whole dollars)

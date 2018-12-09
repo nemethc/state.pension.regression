@@ -1,0 +1,64 @@
+GeoFips,GovtName,PerCapGDP
+0,United States,55418
+1000,Alabama,39523
+2000,Alaska,70683
+4000,Arizona,42353
+5000,Arkansas,37930
+6000,California,65160
+8000,Colorado,57654
+9000,Connecticut,66592
+10000,Delaware,66419
+11000,District of Columbia,176127
+12000,Florida,42085
+13000,Georgia,48979
+15000,Hawaii,55668
+16000,Idaho,39032
+17000,Illinois,58217
+18000,Indiana,48170
+19000,Iowa,53798
+20000,Kansas,50970
+21000,Kentucky,41463
+22000,Louisiana,48377
+23000,Maine,41619
+24000,Maryland,59983
+25000,Massachusetts,71456
+26000,Michigan,46055
+27000,Minnesota,57809
+28000,Mississippi,33558
+29000,Missouri,45076
+30000,Montana,42276
+31000,Nebraska,58053
+32000,Nevada,47648
+33000,New Hampshire,55413
+34000,New Jersey,60684
+35000,New Mexico,43566
+36000,New York,71252
+37000,North Carolina,47142
+38000,North Dakota,67244
+39000,Ohio,50666
+40000,Oklahoma,48569
+41000,Oregon,50138
+42000,Pennsylvania,54725
+44000,Rhode Island,50446
+45000,South Carolina,39673
+46000,South Dakota,52240
+47000,Tennessee,46925
+48000,Texas,57077
+49000,Utah,48376
+50000,Vermont,47408
+51000,Virginia,54730
+53000,Washington,64937
+54000,West Virginia,38860
+55000,Wisconsin,50431
+56000,Wyoming,66776
+91000,New England,63612
+92000,Mideast,65035
+93000,Great Lakes,51365
+94000,Plains,52764
+95000,Southeast,44755
+96000,Southwest,53117
+97000,Rocky Mountain,51746
+98000,Far West,62932
+Legend / Footnotes:,,
+1/ Per capita real GDP statistics for 2010-2017 reflect Census Bureau midyear population estimates available as of December 2017.,,
+"Last updated: November 14, 2018; revised statistics for 1997-2017.",,
