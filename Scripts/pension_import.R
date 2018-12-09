@@ -20,10 +20,7 @@ pension.data <- pension.data %>%
   left_join(tax.data, by = "GovtName") %>% 
   left_join(gdp.data, by = "GovtName") %>% 
   left_join(emp.data, by = "GovtName") %>% 
-  select(fy, PlanFullName, GovtName, PerCapGDP, ActFundedRatio_GASB, UAAL_GASB, BudgRev, LegControl, GovParty, TotMembership, state_emp_per_tenk_pop) %>% 
-  group_by(GovtName) %>% 
-  summarise(mean(ActFundedRatio_GASB)) %>% 
-  ungroup()
+  select(fy, PlanFullName, GovtName, PerCapGDP, ActFundedRatio_GASB, UAAL_GASB, BudgRev, LegControl, GovParty, TotMembership, state_emp_per_tenk_pop)
 
 attach(pension.data)
 
@@ -34,5 +31,4 @@ summary(model1)
 
 
 
-pension.data$PlanFullName
 

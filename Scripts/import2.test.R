@@ -16,23 +16,22 @@ tax.data <- melt(tax.data) %>%
 
 pension.data <- pension.data %>% 
   filter(fy == 2017) %>% 
+  group_by(GovtName, fy) %>% 
+  summarise(avg_state_funded_ratio = mean(ActFundedRatio_GASB, na.rm=TRUE)) %>% 
+  ungroup() %>% 
   inner_join(partisan.data, by = "GovtName") %>% #removes local govts from data set
   left_join(tax.data, by = "GovtName") %>% 
   left_join(gdp.data, by = "GovtName") %>% 
   left_join(emp.data, by = "GovtName") %>% 
-  select(fy, PlanFullName, GovtName, PerCapGDP, ActFundedRatio_GASB, UAAL_GASB, BudgRev, LegControl, GovParty, TotMembership, state_emp_per_tenk_pop) %>% 
-  group_by(GovtName) %>% 
-  summarise(mean(ActFundedRatio_GASB)) %>% 
-  ungroup()
+  select(fy, GovtName, PerCapGDP, avg_state_funded_ratio, BudgRev, LegControl, GovParty, state_emp_per_tenk_pop)
+  
 
 attach(pension.data)
 
-pension.model <- lm(ActFundedRatio_GASB ~ LegControl*GovParty+state_emp_per_tenk_pop+BudgRev*PerCapGDP)
+pension.model <- lm(avg_state_funded_ratio ~ LegControl*GovParty+state_emp_per_tenk_pop+BudgRev*PerCapGDP)
 summary(pension.model)
 model1 <- step(pension.model)
 summary(model1)
 
 
-
-pension.data$PlanFullName
 

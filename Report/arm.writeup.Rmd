@@ -1,0 +1,54 @@
+---
+title: "Exogenous Factors on Statewide Pension Funding"
+output: html_notebook
+---
+
+*with summarizing*
+Coefficients: (2 not defined because of singularities)
+                      Estimate Std. Error t value Pr(>|t|)    
+(Intercept)            0.76867    0.05021  15.309   <2e-16 ***
+LegControlr           -0.03233    0.07391  -0.437   0.6643    
+LegControls           -0.25083    0.10651  -2.355   0.0239 *  
+GovPartyi             -0.02333    0.14349  -0.163   0.8717    
+GovPartyr             -0.12994    0.07101  -1.830   0.0753 .  
+LegControlr:GovPartyi       NA         NA      NA       NA    
+LegControls:GovPartyi       NA         NA      NA       NA    
+LegControlr:GovPartyr  0.11959    0.09416   1.270   0.2120    
+LegControls:GovPartyr  0.44910    0.17752   2.530   0.0158 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.1328 on 37 degrees of freedom
+  (4 observations deleted due to missingness)
+Multiple R-squared:  0.1953,	Adjusted R-squared:  0.06484 
+F-statistic: 1.497 on 6 and 37 DF,  p-value: 0.2063
+
+*Without Summarizing* 
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.55628 -0.09498 -0.01125  0.09912  0.30675 
+
+Coefficients: (2 not defined because of singularities)
+                      Estimate Std. Error t value Pr(>|t|)    
+(Intercept)            0.80649    0.04742  17.008  < 2e-16 ***
+LegControlr           -0.06081    0.06160  -0.987  0.32626    
+LegControls           -0.22024    0.09183  -2.398  0.01858 *  
+GovPartyi             -0.03268    0.11795  -0.277  0.78240    
+GovPartyr             -0.18424    0.06086  -3.027  0.00323 ** 
+LegControlr:GovPartyi       NA         NA      NA       NA    
+LegControls:GovPartyi       NA         NA      NA       NA    
+LegControlr:GovPartyr  0.15784    0.07632   2.068  0.04156 *  
+LegControls:GovPartyr  0.43499    0.14918   2.916  0.00450 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.1573 on 88 degrees of freedom
+  (15 observations deleted due to missingness)
+Multiple R-squared:  0.1385,	Adjusted R-squared:  0.07977 
+F-statistic: 2.358 on 6 and 88 DF,  p-value: 0.03694
+
+
+
+
+
+
