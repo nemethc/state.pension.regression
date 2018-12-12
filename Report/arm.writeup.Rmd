@@ -75,6 +75,7 @@ pension.data <- pension.data %>%
 
 model.data <- pension.data %>% 
   select(ActFundedRatio_GASB, PerCapGDP, BudgRev, state_emp_per_tenk_pop, UnionRep, LegControl, GovParty)
+attach(model.data)
 ```
    
 Below are plots that look at the interactions present within the data. The following scatterplot matrix examines the relationships between the continuous terms. 
@@ -91,12 +92,19 @@ ggpairs(model.data) +
 Some elements do not appear to be normally distributed. However, the response variable appears normal and meets the assumptions for linear regression with levels for the categorical indicators LegControl and GovParty. Transformations can be made to Budget Revenue, State Employment, and Union Representation to improve symmetry. 
 
 ```{r}
-library(ggplot2)
-
+hist(log(BudgRev))
+hist(log(state_emp_per_tenk_pop))
+hist(log(UnionRep))
 ```
 
 
-
+The LM regression model is created to include the plan's funded ratio as the response variable. A stepwise algorithm is used to determine the optimal model fit. 
+```{r}
+pension.model <- lm(ActFundedRatio_GASB ~ LegControl*GovParty+log(state_emp_per_tenk_pop)*log(UnionRep)+log(BudgRev)*PerCapGDP)
+summary(pension.model)
+model1 <- step(pension.model)
+summary(model1)
+```
 
 
 
