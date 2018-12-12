@@ -1,51 +1,111 @@
 ---
-title: "Exogenous Factors on Statewide Pension Funding"
-output: html_notebook
+title: <center>Exogenous Risk Factors and Statewide Pension Funding</center>
+geometry: margin=1in
+output:
+  html_document:
+    theme: readable
+
+    
 ---
 
-*with summarizing*
-Coefficients: (2 not defined because of singularities)
-                      Estimate Std. Error t value Pr(>|t|)    
-(Intercept)            0.76867    0.05021  15.309   <2e-16 ***
-LegControlr           -0.03233    0.07391  -0.437   0.6643    
-LegControls           -0.25083    0.10651  -2.355   0.0239 *  
-GovPartyi             -0.02333    0.14349  -0.163   0.8717    
-GovPartyr             -0.12994    0.07101  -1.830   0.0753 .  
-LegControlr:GovPartyi       NA         NA      NA       NA    
-LegControls:GovPartyi       NA         NA      NA       NA    
-LegControlr:GovPartyr  0.11959    0.09416   1.270   0.2120    
-LegControls:GovPartyr  0.44910    0.17752   2.530   0.0158 *  
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Residual standard error: 0.1328 on 37 degrees of freedom
-  (4 observations deleted due to missingness)
-Multiple R-squared:  0.1953,	Adjusted R-squared:  0.06484 
-F-statistic: 1.497 on 6 and 37 DF,  p-value: 0.2063
+```{r, echo=FALSE}
+#Title page and abstract
+#Introduction
+#Background/Literature section: here you describe the data, its source, what question will the data help answer, and why this question is important.
+#Data and analysis section: descriptive statistics and summary of all variables used in the analysis, hypotheses being tested, and analyses (ANOVA, regression).
+#Results and key findings section
+#Conclusion
 
-*Without Summarizing* 
-Residuals:
-     Min       1Q   Median       3Q      Max 
--0.55628 -0.09498 -0.01125  0.09912  0.30675 
+```
 
-Coefficients: (2 not defined because of singularities)
-                      Estimate Std. Error t value Pr(>|t|)    
-(Intercept)            0.80649    0.04742  17.008  < 2e-16 ***
-LegControlr           -0.06081    0.06160  -0.987  0.32626    
-LegControls           -0.22024    0.09183  -2.398  0.01858 *  
-GovPartyi             -0.03268    0.11795  -0.277  0.78240    
-GovPartyr             -0.18424    0.06086  -3.027  0.00323 ** 
-LegControlr:GovPartyi       NA         NA      NA       NA    
-LegControls:GovPartyi       NA         NA      NA       NA    
-LegControlr:GovPartyr  0.15784    0.07632   2.068  0.04156 *  
-LegControls:GovPartyr  0.43499    0.14918   2.916  0.00450 ** 
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+<style type="text/css">
+div.main-container {
+  max-width: 1800px !important;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
 
-Residual standard error: 0.1573 on 88 degrees of freedom
-  (15 observations deleted due to missingness)
-Multiple R-squared:  0.1385,	Adjusted R-squared:  0.07977 
-F-statistic: 2.358 on 6 and 88 DF,  p-value: 0.03694
+<center>
+## By Corban Nemeth
+## The Evergreen State College
+</center>
+
+&nbsp;
+
+\pagebreak
+
+##Abstract 
+State budgets have yet to recover from the Great Recession. One key driver of state budget priorities are pension plans for public employees. This paper looks at factors exogenous to statewide pension plans to examine what may impact the funded status of a given retirement system. The sample in this study is 110 retirement systems adminstered by state governments. The exogenous factors included in the analysis are partisan control of a state's legislature and governership, the size of state employment adjusted for the total population in the state, the number of public state employees represented by a union, the tax revenue of the state government, and the per capita GDP of the state.   
+
+<br>
+
+##Background
+What, if any, impacts do environmental factors have on the funded status of state public employee pension plans? This study looks at factors outside of the direct control of pension plan adminstrators to examine the relationships between several risk factors and the effect that those factors have on plan funded status. The data for this study was compiled from several sources. The primary data on statewide pension plans came from the Public Plans Database at the Center for Retirement Research. Data on statewide tax revenue was compiled from Pew Charitable Trust. Partisan composition of state legislatures and governerships was obtained from the National Conference of State Legislatures. State gross domestic product per capita was from the Bureau of Economic Analysis. State employment and union participation data was Governing and the Bureau of Labor Statistics. These factors were combined into a dataset in R for purposes of this research exercise. If significant risk factors are detected, then pension plan adminsistrators can identify the risk level of their retirement environment and respond proactively to manage funding challenges. 
+
+##Data and Analysis
+
+To begin, the data was loaded from the sources listed above and combined into a single dataframe. All data is for fiscal year 2017, except for union participation which is year-end 2016.
+```{r warning=FALSE, message=FALSE}
+library(tidyverse)
+library(reshape2)
+tax.data <- read_csv("../Data/TaxRevenue.csv") # from https://www.pewtrusts.org/en/research-and-analysis/data-visualizations/2014/fiscal-50#ind0 , 4th quarter 2017 4 qtr rolling average
+partisan.data <- read_csv("../Data/partisanComposition.csv") #from http://www.ncsl.org/Portals/1/Documents/Elections/Legis_Control_2017_March_1_9%20am.pdf
+pension.data <- read_csv("../Data/PPD_PlanLevel.csv") # from http://publicplansdata.org/public-plans-database/the-2018-data-update/
+gdp.data <- read_csv("../Data/percapgdp.csv") # from https://apps.bea.gov/itable/iTable.cfm?ReqID=70&step=1#reqid=70&step=1&isuri=1 
+emp.data <- read_csv("../Data/emp.data.csv") # from http://www.governing.com/gov-data/public-workforce-salaries/states-most-government-workers-public-employees-by-job-type.html
+union.data <- read_csv("../Data/uniondata.csv")   # from http://www.governing.com/gov-data/public-workforce-salaries/union-membership-affiliation-by-state-data-statistics.html
+
+
+tax.data <- tax.data %>% 
+  select(-c(X52, X53))
+tax.data <- melt(tax.data) %>% 
+  filter(QtrRolAvg == "2017Q4") %>% #4QtrRolAvg dollars in thousands
+  rename(BudgRev = value, GovtName = variable)
+  
+pension.data <- pension.data %>% 
+  filter(fy == 2017) %>% 
+  inner_join(partisan.data, by = "GovtName") %>% #removes local govts from data set
+  left_join(tax.data, by = "GovtName") %>% 
+  left_join(gdp.data, by = "GovtName") %>% 
+  left_join(emp.data, by = "GovtName") %>% 
+  left_join(union.data, by = "GovtName") %>% 
+  select(fy, PlanFullName, GovtName, PerCapGDP, ActFundedRatio_GASB, UAAL_GASB, BudgRev, LegControl, GovParty, TotMembership, state_emp_per_tenk_pop, UnionRep)
+
+model.data <- pension.data %>% 
+  select(ActFundedRatio_GASB, PerCapGDP, BudgRev, state_emp_per_tenk_pop, UnionRep, LegControl, GovParty)
+```
+   
+Below are plots that look at the interactions present within the data. The following scatterplot matrix examines the relationships between the continuous terms. 
+
+```{r warning=FALSE, message=FALSE, fig.align= 'center'}
+library(GGally)
+ggpairs(model.data) + 
+        theme(axis.line=element_blank(),
+        axis.text=element_blank(),
+        axis.ticks=element_blank())
+```
+
+
+Some elements do not appear to be normally distributed. However, the response variable appears normal and meets the assumptions for linear regression with levels for the categorical indicators LegControl and GovParty. Transformations can be made to Budget Revenue, State Employment, and Union Representation to improve symmetry. 
+
+```{r}
+library(ggplot2)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

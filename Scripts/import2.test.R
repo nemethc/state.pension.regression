@@ -6,7 +6,7 @@ partisan.data <- read_csv("./Data/partisanComposition.csv") #from http://www.ncs
 pension.data <- read_csv("./Data/PPD_PlanLevel.csv") # from http://publicplansdata.org/public-plans-database/the-2018-data-update/
 gdp.data <- read_csv("./Data/percapgdp.csv") # from https://apps.bea.gov/itable/iTable.cfm?ReqID=70&step=1#reqid=70&step=1&isuri=1 
 emp.data <- read_csv("./Data/emp.data.csv") # from http://www.governing.com/gov-data/public-workforce-salaries/states-most-government-workers-public-employees-by-job-type.html
-
+union.data <- read_csv("./Data/uniondata.csv")   # from https://www.bls.gov/news.release/union2.t05.htm 
 
 tax.data <- tax.data %>% 
   select(-c(X52, X53))
@@ -23,12 +23,13 @@ pension.data <- pension.data %>%
   left_join(tax.data, by = "GovtName") %>% 
   left_join(gdp.data, by = "GovtName") %>% 
   left_join(emp.data, by = "GovtName") %>% 
-  select(fy, GovtName, PerCapGDP, avg_state_funded_ratio, BudgRev, LegControl, GovParty, state_emp_per_tenk_pop)
+  left_join(union.data, by = "GovtName") %>% 
+  select(fy, GovtName, PerCapGDP, avg_state_funded_ratio, BudgRev, LegControl, GovParty, state_emp_per_tenk_pop, UnionRep)
   
 
 attach(pension.data)
 
-pension.model <- lm(avg_state_funded_ratio ~ LegControl*GovParty+state_emp_per_tenk_pop+BudgRev*PerCapGDP)
+pension.model <- lm(avg_state_funded_ratio ~ LegControl*GovParty+state_emp_per_tenk_pop*UnionRep+BudgRev*PerCapGDP)
 summary(pension.model)
 model1 <- step(pension.model)
 summary(model1)
