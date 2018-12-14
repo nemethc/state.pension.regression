@@ -1,11 +1,15 @@
 ---
-title: <center>Exogenous Risk Factors and Statewide Pension Funding</center>
-geometry: margin=1in
-output:
-  html_document:
-    theme: readable
-
-    
+title: Statewide Pension Funding and Exogenous Risk Factors
+author: |
+  | Corban Nemeth 
+  | The Evergreen State College
+header-includes: |
+    \usepackage{fancyhdr}
+    \pagestyle{fancy}
+    \fancyhead[CO,CE]{Statewide Pension Funding and Exogenous Risk Factors}
+output: 
+  pdf_document:
+    df_print: kable
 ---
 
 
@@ -19,43 +23,39 @@ output:
 
 ```
 
-<style type="text/css">
-div.main-container {
-  max-width: 1800px !important;
-  margin-left: auto;
-  margin-right: auto;
-}
-</style>
-
-<center>
-## By Corban Nemeth
-## The Evergreen State College
-</center>
-
-&nbsp;
-
-\pagebreak
 
 ##Abstract 
-State budgets have yet to recover from the Great Recession. One key driver of state budget priorities are pension plans for public employees. This paper looks at factors exogenous to statewide pension plans to examine what may impact the funded status of a given retirement system. The sample in this study is 110 retirement systems adminstered by state governments. The exogenous factors included in the analysis are partisan control of a state's legislature and governership, the size of state employment adjusted for the total population in the state, the number of public state employees represented by a union, the tax revenue of the state government, and the per capita GDP of the state.   
+  This analysis examines the funded status of pension systems in all fifty states to determine if there is a significant difference in state funding practice. Additionally, multiple regression is used to look at factors exogenous to statewide pension plans to examine what factors impact the funded status of a given retirement system. The analysis finds that significant differences in state pension funding exist, and the exogenous factors that impact pension funding is the interaction of partisan control in state governments. 
 
-<br>
+\newpage
+
+##Introduction
+  What, if any, differences exist in state pension funding, and what impacts do environmental factors have on the funded status of state public employee pension plans? Ongoing pension obligations strain state budgets. One way to manage the size of pension obligations is to fully fund plans, rather than defer fixed costs to a later date. This analysis will examine if significant differences exist between states in regards to the funded status of statewide pension plans, and then examine if any exogenous factors have a significant impact on plan funding within the state. The sample in this study is 110 retirement systems administered by fifty state governments. The exogenous factors included in the analysis are partisan control of a state's legislature and governorship, the size of state employment adjusted for the total population in the state, the number of public state employees represented by a union, the tax revenue of the state government, and the per capita GDP of the state.        
 
 ##Background
-What, if any, impacts do environmental factors have on the funded status of state public employee pension plans? This study looks at factors outside of the direct control of pension plan adminstrators to examine the relationships between several risk factors and the effect that those factors have on plan funded status. The data for this study was compiled from several sources. The primary data on statewide pension plans came from the Public Plans Database at the Center for Retirement Research. Data on statewide tax revenue was compiled from Pew Charitable Trust. Partisan composition of state legislatures and governerships was obtained from the National Conference of State Legislatures. State gross domestic product per capita was from the Bureau of Economic Analysis. State employment and union participation data was Governing and the Bureau of Labor Statistics. These factors were combined into a dataset in R for purposes of this research exercise. If significant risk factors are detected, then pension plan adminsistrators can identify the risk level of their retirement environment and respond proactively to manage funding challenges. 
+   This study looks at the funded status of state retirement systems and factors outside of the direct control of pension plan administrators to examine the relationships between several risk factors and the effect that those factors have on plan funded status. The data for this study was compiled from several sources. The primary data on statewide pension plans came from the Public Plans Database at the Center for Retirement Research. Data on statewide tax revenue was compiled from Pew Charitable Trust. Partisan composition of state legislatures and governorship was obtained from the National Conference of State Legislatures. State gross domestic product per capita was from the Bureau of Economic Analysis. State employment and union participation data was Governing and the Bureau of Labor Statistics. These factors were combined into a data set in R for purposes of this research exercise. If significant risk factors are detected, then pension plan administrators can identify the risk level of their retirement environment and respond proactively to manage funding challenges. 
+
+\newpage
 
 ##Data and Analysis
 
-To begin, the data was loaded from the sources listed above and combined into a single dataframe. All data is for fiscal year 2017, except for union participation which is year-end 2016.
+###Data Sources
+  To begin, the data was loaded from the sources listed above and combined into a single data frame. All data is for fiscal year 2017, except for union participation which is year-end 2016.
 ```{r warning=FALSE, message=FALSE}
 library(tidyverse)
 library(reshape2)
-tax.data <- read_csv("../Data/TaxRevenue.csv") # from https://www.pewtrusts.org/en/research-and-analysis/data-visualizations/2014/fiscal-50#ind0 , 4th quarter 2017 4 qtr rolling average
-partisan.data <- read_csv("../Data/partisanComposition.csv") #from http://www.ncsl.org/Portals/1/Documents/Elections/Legis_Control_2017_March_1_9%20am.pdf
-pension.data <- read_csv("../Data/PPD_PlanLevel.csv") # from http://publicplansdata.org/public-plans-database/the-2018-data-update/
-gdp.data <- read_csv("../Data/percapgdp.csv") # from https://apps.bea.gov/itable/iTable.cfm?ReqID=70&step=1#reqid=70&step=1&isuri=1 
-emp.data <- read_csv("../Data/emp.data.csv") # from http://www.governing.com/gov-data/public-workforce-salaries/states-most-government-workers-public-employees-by-job-type.html
-union.data <- read_csv("../Data/uniondata.csv")   # from http://www.governing.com/gov-data/public-workforce-salaries/union-membership-affiliation-by-state-data-statistics.html
+
+# from Pew Charitable Trust
+tax.data <- read_csv("../Data/TaxRevenue.csv") 
+#from the National Conference of State Legislatures
+partisan.data <- read_csv("../Data/partisanComposition.csv")
+# from The Center on Retirement Research
+pension.data <- read_csv("../Data/PPD_PlanLevel.csv")
+# from the Bureau of Economic Analysis
+gdp.data <- read_csv("../Data/percapgdp.csv")
+# from the Bureau of Labor Statistics
+emp.data <- read_csv("../Data/emp.data.csv") 
+union.data <- read_csv("../Data/uniondata.csv") 
 
 
 tax.data <- tax.data %>% 
@@ -71,51 +71,113 @@ pension.data <- pension.data %>%
   left_join(gdp.data, by = "GovtName") %>% 
   left_join(emp.data, by = "GovtName") %>% 
   left_join(union.data, by = "GovtName") %>% 
-  select(fy, PlanFullName, GovtName, PerCapGDP, ActFundedRatio_GASB, UAAL_GASB, BudgRev, LegControl, GovParty, TotMembership, state_emp_per_tenk_pop, UnionRep)
+  select(fy, PlanFullName, GovtName, PerCapGDP, ActFundedRatio_GASB, UAAL_GASB,
+         BudgRev, LegControl, GovParty, TotMembership, state_emp_per_tenk_pop, UnionRep)
 
 model.data <- pension.data %>% 
-  select(ActFundedRatio_GASB, PerCapGDP, BudgRev, state_emp_per_tenk_pop, UnionRep, LegControl, GovParty)
+  select(ActFundedRatio_GASB, PerCapGDP, BudgRev, state_emp_per_tenk_pop, UnionRep, 
+         LegControl, GovParty)
+
 attach(model.data)
 ```
-   
-Below are plots that look at the interactions present within the data. The following scatterplot matrix examines the relationships between the continuous terms. 
 
-```{r warning=FALSE, message=FALSE, fig.align= 'center'}
+\newpage
+
+###Analysis of Variance
+  In order to determine if significant differences in funding exist among states, an analysis of variance is used.
+
+```{r}
+state.model <- aov(pension.data$ActFundedRatio_GASB ~ pension.data$GovtName)
+summary(state.model)
+```
+\vspace{12pt}
+
+  According to the analysis of variance, there is a 0.5% probability that there is no systematic, significant difference between plan funding in the fifty states. A Tukey HSD test can then be utilized to determine which states are the drivers of the significant difference. 
+
+```{r, results='hide', message=FALSE}
+library(agricolae)
+state.tukey <- HSD.test(state.model, "pension.data$GovtName", group = TRUE)
+state.tukey
+```
+\vspace{12pt}
+
+  From the Tukey HSD grouped output, it is clear that pension plans in Wisconsin, New York, and Washington are significantly more funded than those in the rest of the country, leading to the statistical significance of the model. 
+
+### Multiple Regression
+  Once the differences in the states are shown to be significant, a multiple regression can be used to analyze what, if any, exogenous factors have a significant impact on pension funding. The factors analyzed are partisan control of a state's legislature and governorship, the size of state employment adjusted for the total population in the state, the number of public state employees represented by a union, the tax revenue of the state government, and the per capita GDP of the state. Below is a scatter plot matrix that look at the interactions present within the data.
+
+
+\newpage
+
+```{r warning=FALSE, message=FALSE, fig.align= 'center', fig.width=8}
 library(GGally)
 ggpairs(model.data) + 
         theme(axis.line=element_blank(),
         axis.text=element_blank(),
         axis.ticks=element_blank())
+  
 ```
 
+\vspace{12pt}
 
-Some elements do not appear to be normally distributed. However, the response variable appears normal and meets the assumptions for linear regression with levels for the categorical indicators LegControl and GovParty. Transformations can be made to Budget Revenue, State Employment, and Union Representation to improve symmetry. 
+Some elements do not appear to be normally distributed. However, the response variable appears normal and meets the assumptions for linear regression. Transformations can be made to Budget Revenue, State Employment, and Union Representation to improve symmetry and reduce the impact of outliers. 
 
-```{r}
-hist(log(BudgRev))
-hist(log(state_emp_per_tenk_pop))
-hist(log(UnionRep))
+```{r, fig.align= 'center', fig.width=2, fig.height=2, fig.show='hold'}
+library(ggplot2)
+ggplot(model.data, aes(x=log(BudgRev)))+
+  geom_density() + theme_light()
+
+ggplot(model.data, aes(x=log(state_emp_per_tenk_pop)))+
+  geom_density() + theme_light()
+
+ggplot(model.data, aes(x=log(UnionRep)))+
+  geom_density() + theme_light()
 ```
+\vspace{12pt}
 
+The LM regression model is created to include the plan's funded ratio as the response variable. Dummy variables will be used for the categorical indicators LegControl and GovParty, allowing them to be included in the regression. A stepwise algorithm is used to determine the optimal model fit. 
+```{r, results='hide', message=FALSE}
+pension.model <- lm(ActFundedRatio_GASB ~ LegControl*GovParty+
+                      log(state_emp_per_tenk_pop)*log(UnionRep)+log(BudgRev)*PerCapGDP)
 
-The LM regression model is created to include the plan's funded ratio as the response variable. A stepwise algorithm is used to determine the optimal model fit. 
-```{r}
-pension.model <- lm(ActFundedRatio_GASB ~ LegControl*GovParty+log(state_emp_per_tenk_pop)*log(UnionRep)+log(BudgRev)*PerCapGDP)
 summary(pension.model)
 model1 <- step(pension.model)
+```
+```{r}
 summary(model1)
 ```
 
+\vspace{12pt}
 
+  The optimal model includes partisan control of the state legislature and partisan control of the governorship. A split legislature is associated with a 22% decrease in funded status when compared to a Democratic legislature, with a p-value of 0.02. A Republican governor is associated with a 18% decrease in funded status over a Democratic governor, with a p-value of 0.003. However, the interaction of a Republican legislature and a Republican governor is associated with a 15% increase in funded status over a Democratic legislature. A split legislature with a Republican governor is also significant, but that is largely due to the small sample size of states that fall into that category. 
 
+###Model Diagnostics
 
+```{r, fig.height=2, fig.width=2}
+plot(model1)
+```
+\vspace{12pt}
+  Diagnostic plots largely support the validity of the model. There is a slight s-shape to the QQ plot, but to a very minor degree and errors are dispersed appropriately.  
 
+## Results and Key Findings
+  The analysis of statewide pension plan data indicates that a significant difference exists among the states in relation to plan funding status. Wisconsin, New York, and Washington stand apart from the rest of the states, and have significantly better plan funded status on average. 
+  Additionally, the only significant exogenous risk factors identified in the multiple regression are partisan control of state legislatures and governorship. The size of state employment adjusted for the total population in the state, the number of public state employees represented by a union, the tax revenue of the state government, and the per capita GDP of the state did not have an impact on the funded status of a statewide retirement plan. 
+  
 
+## Conclusion
+  It is apparent from this analysis that there is a significant difference in plan funded status among states. Additionally, partisan factors are associated with changes in pension plan funding. Particularly, split legislatures and Republican governess are associated with a decrease in funded status. Overall, partisan unity across government control typically increases plan funded status in those states. Also notable is the abscence of significant statewide demographic and economic factors. It appears the ability to under-fund a pension is not limited to states with low budgets and revenues. Additionally, union participation and the size of government employement does not appear to burden systems. 
+  Washington is notable among the states identified as having significantly better funded systems in that it has a nonpartisan government actuarial service provider and select committee tasked with calculating and adopting contribution rates ^[It should be noted here that the author happens to work for said actuarial service provider and serve as staff to said select committee. I may be slightly biased.]. Additional research would be needed to show that nonpartisan pension processes improve plan funding, but it is feasible given the analysis conducted here. 
 
+\newpage
 
+## Appendix
 
+### Data: Pension Plans, and Funded Status, and Exogenous Indicators
 
-
+```{r, echo=FALSE}
+summary(model.data)
+model.data
+```
 
 
 

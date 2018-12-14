@@ -26,6 +26,15 @@ pension.data <- pension.data %>%
 
 attach(pension.data)
 
+state.model <- aov(ActFundedRatio_GASB ~ GovtName)
+summary.lm(state.model)
+
+state.tukey <- TukeyHSD(state.model)
+
+library(agricolae)
+state.tukey.two <- HSD.test(state.model, "GovtName")
+state.tukey.two
+
 pension.model <- lm(ActFundedRatio_GASB ~ LegControl*GovParty+state_emp_per_tenk_pop*UnionRep+BudgRev*PerCapGDP)
 summary(pension.model)
 model1 <- step(pension.model)
