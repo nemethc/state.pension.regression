@@ -25,22 +25,30 @@ output:
 
 
 ##Abstract 
-  This analysis examines the funded status of pension systems in all fifty states to determine if there is a significant difference in state funding practice. Additionally, multiple regression is used to look at factors exogenous to statewide pension plans to examine what factors impact the funded status of a given retirement system. The analysis finds that significant differences in state pension funding exist, and the exogenous factors that impact pension funding is the interaction of partisan control in state governments. 
+  This analysis examines the funded status of pension systems in all fifty states to determine if there is a significant difference in state funding practice. Additionally, multiple regression is used to look at factors exogenous to statewide pension plans to determine what outside factors impact the funded status of a given retirement system. The analysis finds that significant differences in state pension funding exist, and the exogenous factor that significantly impacts pension funding is partisan, rather than demographic or economic. 
 
 \newpage
 
 ##Introduction
-  What, if any, differences exist in state pension funding, and what impacts do environmental factors have on the funded status of state public employee pension plans? Ongoing pension obligations strain state budgets. One way to manage the size of pension obligations is to fully fund plans, rather than defer fixed costs to a later date. This analysis will examine if significant differences exist between states in regards to the funded status of statewide pension plans, and then examine if any exogenous factors have a significant impact on plan funding within the state. The sample in this study is 110 retirement systems administered by fifty state governments. The exogenous factors included in the analysis are partisan control of a state's legislature and governorship, the size of state employment adjusted for the total population in the state, the number of public state employees represented by a union, the tax revenue of the state government, and the per capita GDP of the state.        
+  What, if any, differences exist in state pension funding, and what impacts do environmental factors have on the funded status of state public employee pension plans? Ongoing pension obligations strain state budgets. One way to manage the size of pension obligations is to fully fund plans, rather than defer fixed costs to a later date. This analysis will examine if significant differences exist between states in regards to the funded status of statewide pension plans, and then examine if any exogenous factors have a significant impact on plan funding within the state. The sample in this study is 110 retirement systems administered by fifty state governments. The exogenous factors included in the analysis are political, demographic, and economic:   
+    
+  * partisan control of a state's legislature and governorship, 
+  * the size of state employment adjusted for the total population in the state, 
+  * the number of public state employees represented by a union, 
+  * the tax revenue of the state government, and 
+  * the per capita GDP of the state.        
 
 ##Background
-   This study looks at the funded status of state retirement systems and factors outside of the direct control of pension plan administrators to examine the relationships between several risk factors and the effect that those factors have on plan funded status. The data for this study was compiled from several sources. The primary data on statewide pension plans came from the Public Plans Database at the Center for Retirement Research. Data on statewide tax revenue was compiled from Pew Charitable Trust. Partisan composition of state legislatures and governorship was obtained from the National Conference of State Legislatures. State gross domestic product per capita was from the Bureau of Economic Analysis. State employment and union participation data was Governing and the Bureau of Labor Statistics. These factors were combined into a data set in R for purposes of this research exercise. If significant risk factors are detected, then pension plan administrators can identify the risk level of their retirement environment and respond proactively to manage funding challenges. 
+   This study^[R Markdown and LaTeX are an amazing combination for report preparation. This analysis was written solely in RStudio] looks at the funded status of state retirement systems and factors outside of the direct control of pension plan administrators to examine the relationships between several risk factors and the effect that those factors have on plan funded status. The data for this study was compiled from several sources. The primary data on statewide pension plans came from the Public Plans Database at the Center for Retirement Research. Data on statewide tax revenue was compiled from Pew Charitable Trust. Partisan composition of state legislatures and governorship was obtained from the National Conference of State Legislatures. State gross domestic product per capita was from the Bureau of Economic Analysis. State employment and union participation data was Governing and the Bureau of Labor Statistics. These factors were combined into a data set in R for purposes of this research exercise. 
+   If states are shown to have significantly better or worse statewide funding, then best practices can be identified that may be applicable to other states. If significant exogenous risk factors are detected, then pension plan administrators can identify the risk level of their retirement environment and respond proactively to manage funding challenges. The combined unfunded liability of all plans included in this data set is over twelve billion dollars. Any strategies that can help manage this increasing obligation will provide multiplicative economic benefits to cash-strapped state governments. 
+   
 
 \newpage
 
 ##Data and Analysis
 
 ###Data Sources
-  To begin, the data was loaded from the sources listed above and combined into a single data frame. All data is for fiscal year 2017, except for union participation which is year-end 2016.
+  To begin, the data was loaded from the sources listed above and combined into a single data frame. All data is for fiscal year 2017, except for union participation which is year-end 2016^[Tidyverse is a game-changing package for data manipulation and cleaning.].
 ```{r warning=FALSE, message=FALSE}
 library(tidyverse)
 library(reshape2)
@@ -71,8 +79,8 @@ pension.data <- pension.data %>%
   left_join(gdp.data, by = "GovtName") %>% 
   left_join(emp.data, by = "GovtName") %>% 
   left_join(union.data, by = "GovtName") %>% 
-  select(fy, PlanFullName, GovtName, PerCapGDP, ActFundedRatio_GASB, UAAL_GASB,
-         BudgRev, LegControl, GovParty, TotMembership, state_emp_per_tenk_pop, UnionRep)
+  select(fy, PlanFullName, GovtName, PerCapGDP, ActFundedRatio_GASB,
+         BudgRev, LegControl, GovParty, state_emp_per_tenk_pop, UnionRep)
 
 model.data <- pension.data %>% 
   select(ActFundedRatio_GASB, PerCapGDP, BudgRev, state_emp_per_tenk_pop, UnionRep, 
@@ -104,7 +112,7 @@ state.tukey
   From the Tukey HSD grouped output, it is clear that pension plans in Wisconsin, New York, and Washington are significantly more funded than those in the rest of the country, leading to the statistical significance of the model. 
 
 ### Multiple Regression
-  Once the differences in the states are shown to be significant, a multiple regression can be used to analyze what, if any, exogenous factors have a significant impact on pension funding. The factors analyzed are partisan control of a state's legislature and governorship, the size of state employment adjusted for the total population in the state, the number of public state employees represented by a union, the tax revenue of the state government, and the per capita GDP of the state. Below is a scatter plot matrix that look at the interactions present within the data.
+  Once the differences in the states are shown to be significant, a multiple regression can be used to analyze what, if any, exogenous factors have a significant impact on pension funding. The factors analyzed are partisan control of a state's legislature and governorship, the size of state employment adjusted for the total population in the state, the number of public state employees represented by a union, the tax revenue of the state government, and the per capita GDP of the state. Below is a scatter plot matrix that examines the interactions present within the data.
 
 
 \newpage
@@ -120,7 +128,7 @@ ggpairs(model.data) +
 
 \vspace{12pt}
 
-Some elements do not appear to be normally distributed. However, the response variable appears normal and meets the assumptions for linear regression. Transformations can be made to Budget Revenue, State Employment, and Union Representation to improve symmetry and reduce the impact of outliers. 
+  Some elements do not appear to be normally distributed. However, the response variable appears normal and meets the assumptions for linear regression. Transformations can be made to Budget Revenue, State Employment, and Union Representation to improve symmetry and reduce the impact of outliers. 
 
 ```{r, fig.align= 'center', fig.width=2, fig.height=2, fig.show='hold'}
 library(ggplot2)
@@ -135,7 +143,7 @@ ggplot(model.data, aes(x=log(UnionRep)))+
 ```
 \vspace{12pt}
 
-The LM regression model is created to include the plan's funded ratio as the response variable. Dummy variables will be used for the categorical indicators LegControl and GovParty, allowing them to be included in the regression. A stepwise algorithm is used to determine the optimal model fit. 
+  The LM regression model is created to include the plan's funded ratio as the response variable. Dummy variables will be used for the categorical indicators LegControl and GovParty, allowing them to be included in the regression. Interaction terms are specified for partisanship, economic, and demographic factors. A stepwise algorithm is used to determine the optimal model fit. 
 ```{r, results='hide', message=FALSE}
 pension.model <- lm(ActFundedRatio_GASB ~ LegControl*GovParty+
                       log(state_emp_per_tenk_pop)*log(UnionRep)+log(BudgRev)*PerCapGDP)
@@ -153,20 +161,26 @@ summary(model1)
 
 ###Model Diagnostics
 
-```{r, fig.height=2, fig.width=2}
+```{r, fig.height=3, fig.width=3, fig.show='hold'}
 plot(model1)
 ```
+
 \vspace{12pt}
+
   Diagnostic plots largely support the validity of the model. There is a slight s-shape to the QQ plot, but to a very minor degree and errors are dispersed appropriately.  
 
 ## Results and Key Findings
   The analysis of statewide pension plan data indicates that a significant difference exists among the states in relation to plan funding status. Wisconsin, New York, and Washington stand apart from the rest of the states, and have significantly better plan funded status on average. 
-  Additionally, the only significant exogenous risk factors identified in the multiple regression are partisan control of state legislatures and governorship. The size of state employment adjusted for the total population in the state, the number of public state employees represented by a union, the tax revenue of the state government, and the per capita GDP of the state did not have an impact on the funded status of a statewide retirement plan. 
+    
+  The only significant exogenous risk factors identified in the multiple regression are partisan control of state legislatures and governorship. The size of state employment adjusted for the total population in the state, the number of public state employees represented by a union, the tax revenue of the state government, and the per capita GDP of the state did not have an impact on the funded status of a statewide retirement plan. 
   
 
 ## Conclusion
-  It is apparent from this analysis that there is a significant difference in plan funded status among states. Additionally, partisan factors are associated with changes in pension plan funding. Particularly, split legislatures and Republican governess are associated with a decrease in funded status. Overall, partisan unity across government control typically increases plan funded status in those states. Also notable is the abscence of significant statewide demographic and economic factors. It appears the ability to under-fund a pension is not limited to states with low budgets and revenues. Additionally, union participation and the size of government employement does not appear to burden systems. 
-  Washington is notable among the states identified as having significantly better funded systems in that it has a nonpartisan government actuarial service provider and select committee tasked with calculating and adopting contribution rates ^[It should be noted here that the author happens to work for said actuarial service provider and serve as staff to said select committee. I may be slightly biased.]. Additional research would be needed to show that nonpartisan pension processes improve plan funding, but it is feasible given the analysis conducted here. 
+  It is apparent from this analysis that there is a significant difference in plan funded status among states. Additionally, partisan factors are associated with changes in pension plan funding. Particularly, split legislatures and Republican governors are associated with a decrease in funded status. Generally, partisan unity across government control typically increases plan funded status in states. Also notable is the absence of significant statewide demographic and economic factors that play a roll in plan funded status. It appears the ability to under-fund a pension is not limited to states with low budgets and revenues. Additionally, union participation and the size of government employment does not appear to burden systems.   
+    
+  Washington is notable among the states identified as having significantly better funded systems in that it has a nonpartisan government actuarial service provider and select committee tasked with calculating and adopting contribution rates ^[It should be noted here that the author happens to work for said actuarial service provider and serve as staff to said select committee. I may be slightly biased.]. Additional research would be needed to show that nonpartisan pension processes improve plan funding, but it is feasible given the analysis conducted here.   
+    
+  If states are to manage pension debt effectively, one strategy may be to reduce the impact of partisanship where feasible, and implement non-partisan funding processes. Ultimately, states should not rely on economic or demographic trends to solve or excuse pension debt. Governments of all sizes are able to fund systems, and best practices may be able to be identified in those governments to support sustainable retirements for public employees. 
 
 \newpage
 
@@ -174,9 +188,14 @@ plot(model1)
 
 ### Data: Pension Plans, and Funded Status, and Exogenous Indicators
 
-```{r, echo=FALSE}
-summary(model.data)
-model.data
+```{r, echo=FALSE, fig.width=8}
+library(kableExtra)
+summary(pension.data)
+table.data <- pension.data %>% 
+  select(PlanFullName, ActFundedRatio_GASB, LegControl, GovParty)
+kable(table.data, "latex", longtable = T) %>% 
+  kable_styling(full_width = T) %>% 
+  column_spec(2, bold = T, width = "20em")
 ```
 
 
